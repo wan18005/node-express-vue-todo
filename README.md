@@ -231,19 +231,7 @@ app.put('/api/items/:id', (req, res) => {
   }
   let item = items[index];
   item.text = req.body.text;
-  item.completed = req.body.completed;Let's test it! In one terminal:
-
-```
-node server.js
-```
-
-In another terminal:
-
-```
-curl -X POST -d '{"text":"get an A on the exam", "completed":false}' -H "Content-Type: application/json" localhost:3000/api/items
-curl -X POST -d '{"text":"party all night", "completed":false}' -H "Content-Type: application/json" localhost:3000/api/items
-curl -X GET localhost:3000/api/items
-```
+  item.completed = req.body.completed;
   res.send(item);
 });
 ```
