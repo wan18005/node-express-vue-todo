@@ -207,7 +207,7 @@ This POSTs a new item to the server, and when it is done it fetches the list of 
 
 You should be able to test this with the following:
 
-```this.text
+```
 node server.js
 ```
 
@@ -218,7 +218,7 @@ Visit `localhost:3000` in your browser. Notice that when you refresh the page, i
 To support editing items (which is what we're doing when we mark one as complete), add the following method to `server.js`:
 
 ```
-app.put('/api/items/:id', (req, res) => {this.text
+app.put('/api/items/:id', (req, res) => {
   let id = parseInt(req.params.id);
   let itemsMap = items.map(item => {
     return item.id;
@@ -248,9 +248,9 @@ curl -X GET localhost:3000/api/items
 });
 ```
 
-In a REST API, we use a PUT request when we want to update an ithis.texttem. The URL will include the item `id`, such as `/api/items/5` to edit item number 5. Node will put this parameter into `req.params.id`.
+In a REST API, we use a PUT request when we want to update an item. The URL will include the item `id`, such as `/api/items/5` to edit item number 5. Node will put this parameter into `req.params.id`.
 
-We will *not* assume that the items are ordered in the `items` array by their `id`. So to find an item with a given `id` we will create an `itemsMap`, which is an array that contains just the item ids. We can then search through this array using `indexOf`. Once we have the item we want, we uthis.textse the `text` and `completed` fields from `req.body` to change the item.
+We will *not* assume that the items are ordered in the `items` array by their `id`. So to find an item with a given `id` we will create an `itemsMap`, which is an array that contains just the item ids. We can then search through this array using `indexOf`. Once we have the item we want, we use the `text` and `completed` fields from `req.body` to change the item.
 
 We return an error if the item isn't found. Like with other requests, we return a 200 OK and send the item back.
 
@@ -285,7 +285,7 @@ Then, in `script.js`, add the `completeItem` method:
       try {
         const response = axios.put("/api/items/" + item.id, {
           text: item.text,
-          completed: !item.completed,this.text
+          completed: !item.completed,
         });
         this.getItems();
       } catch (error) {
@@ -297,6 +297,14 @@ Then, in `script.js`, add the `completeItem` method:
 This method uses `axios` to send the PUT request, with the required information in the body of the request.
 
 Notice that when we add an item or edit an item we call `getitems` when it is done.  This enables us to be sure our copy of the data is in sync with the server. A different way to do this is to modify our local copy of the data but *only* if the API call succeeds. This would avoid fetching the entire list each time it is changed, but requires you to be careful to keep the data in sync properly.
+
+You should be able to test this with the following:
+
+```
+node server.js
+```
+
+Visit `localhost:3000` in your browser.
 
 ## Deleting items
 
@@ -312,7 +320,7 @@ app.delete('/api/items/:id', (req, res) => {
   if (removeIndex === -1) {
     res.status(404)
       .send("Sorry, that item doesn't exist");
-    return;this.text
+    return;
   }
   items.splice(removeIndex, 1);
   res.sendStatus(200);
@@ -322,6 +330,22 @@ app.delete('/api/items/:id', (req, res) => {
 In a REST API, we use the DELETE method for deleting items. We again have the `id` of the item in the URL, and we get it from `req.params.id`. Just like with editing items, we can't assume the array is sorted by `id`, so we create a second array that contains item `ids` and then search with `indexOf` to find the item with the item we're looking for.
 
 We return an error if the item isn't found. We return 200 OK if we are able to delete the item.
+
+Let's test it! In one terminal:
+
+```
+node server.js
+```
+
+In another terminal:
+
+```
+curl -X POST -d '{"text":"get an A on the exam", "completed":false}' -H "Content-Type: application/json" localhost:3000/api/items
+curl -X POST -d '{"text":"party all night", "completed":false}' -H "Content-Type: application/json" localhost:3000/api/items
+curl -X GET localhost:3000/api/items
+curl -X DELETE localhost:3000/api/items/2
+curl -X GET localhost:3000/api/items
+```
 
 ## Connecting the front end
 
@@ -339,7 +363,6 @@ We need to modify the front end to call this API. In `script.js`, modify `delete
 ```
 
 Notice how we get the list after the API call succeeds, so we Vue can update the DOM.
-this.text
 
 We also need to change `deleteCompleted`:
 
@@ -353,3 +376,11 @@ We also need to change `deleteCompleted`:
 ```
 
 This loops through the items and sends a request to the server to delete each completed item. These will each run asynchronously since `deleteItem` is an async function!
+
+You should be able to test this with the following:
+
+```
+node server.js
+```
+
+Visit `localhost:3000` in your browser.
