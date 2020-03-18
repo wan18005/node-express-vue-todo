@@ -99,7 +99,7 @@ To add new items, let's modify the `addItems` function:
 ```javascript
     async addItem() {
       try {
-        const response = await axios.post("/api/items", {
+        await axios.post("/api/items", {
           text: this.text,
           completed: false
         });
@@ -146,7 +146,7 @@ Then, in the `methods` section, add the `completeItem` method:
 ```javascript
     async completeItem(item) {
       try {
-        const response = axios.put("/api/items/" + item.id, {
+        axios.put("/api/items/" + item.id, {
           text: item.text,
           completed: !item.completed,
         });
@@ -178,7 +178,7 @@ We need to modify the front end to call the API to delete an item. In
 ```
     async deleteItem(item) {
       try {
-        const response = await axios.delete("/api/items/" + item.id);
+        await axios.delete("/api/items/" + item.id);
         this.getItems();
       } catch (error) {
         console.log(error);
