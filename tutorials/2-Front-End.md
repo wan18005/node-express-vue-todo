@@ -23,7 +23,7 @@ are gone, since they are stored in the front end.
 ## Setup proxy configuration
 
 We need to tell the front end to send API requests to the back end. Do this by
-creating a file called `.vue.config.js` in the `front-end` directory. This file
+creating a file called `vue.config.js` in the `front-end` directory. This file
 should contain:
 
 ```javascript
