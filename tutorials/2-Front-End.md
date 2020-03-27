@@ -43,7 +43,7 @@ make API requests instead of fetch. Install this with:
 npm install axios
 ```
 
-Then, at the start of the `script` section in `src/Home.vue`, import this
+Then, at the start of the `script` section in `src/views/Home.vue`, import this
 library:
 
 ```javascript
@@ -64,7 +64,7 @@ hard-coded data there:
   data() {
     return {
       items: [],
-      message: '',
+      text: '',
       show: 'all',
     }
   },
