@@ -16,7 +16,7 @@
     <li v-for="item in filteredItems" :key="item.id">
       <label :class="{ item: true, completed: item.completed }">
         {{ item.text }}
-        <input type="checkbox" v-model="item.completed" />
+          <input type="checkbox" v-model="item.completed" @click="completeItem(item)" />
         <span class="checkmark"></span>
       </label>
       <button @click="deleteItem(item)" class="delete">X</button>
@@ -26,23 +26,18 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Home',
   data() {
     return {
-      items: [{
-        text: "make an app",
-        completed: false,
-      }, {
-        text: "declare victory",
-        completed: false,
-      }, {
-        text: "profit",
-        completed: false
-      }],
+      items: [],
       text: '',
       show: 'all',
     }
+  },
+  created: function() {
+    this.getItems();
   },
   computed: {
     activeItems() {
@@ -63,17 +58,25 @@ export default {
     },
   },
   methods: {
-    addItem() {
-      this.items.push({
-        text: this.text,
-        completed: false
-      });
-      this.text = '';
+    async addItem() {
+      try {
+        await axios.post("/api/items", {
+          text: this.text,
+          completed: false
+        });
+        this.text = "";
+        this.getItems();
+      } catch (error) {
+        console.log(error);
+      }
     },
-    deleteItem(item) {
-      var index = this.items.indexOf(item);
-      if (index > -1)
-        this.items.splice(index, 1);
+    async deleteItem(item) {
+      try {
+        await axios.delete("/api/items/" + item.id);
+        this.getItems();
+      } catch (error) {
+        console.log(error);
+      }
     },
     showAll() {
       this.show = 'all';
@@ -85,9 +88,29 @@ export default {
       this.show = 'completed';
     },
     deleteCompleted() {
-      this.items = this.items.filter(item => {
-        return !item.completed;
+      this.items.forEach(item => {
+        if (item.completed)
+          this.deleteItem(item);
       });
+    },
+    async getItems() {
+      try {
+        const response = await axios.get("/api/items");
+        this.items = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async completeItem(item) {
+      try {
+        axios.put("/api/items/" + item.id, {
+          text: item.text,
+          completed: !item.completed,
+        });
+        this.getItems();
+      } catch (error) {
+        console.log(error);
+      }
     },
   }
 }
@@ -98,7 +121,6 @@ export default {
 ul {
   list-style: none;
 }
-
 li {
   background: #fff;
   width: 500px;
@@ -109,44 +131,35 @@ li {
   display: flex;
   align-items: center;
 }
-
 .delete {
   display: none;
   margin-left: auto;
 }
-
 li:hover .delete {
   display: block;
 }
-
 label {
   width: 400px;
 }
-
 .completed {
   text-decoration: line-through;
 }
-
 /* Form */
 input[type=checkbox] {
   transform: scale(1.5);
   margin-right: 10px;
 }
-
 input[type=text] {
   font-size: 1em;
 }
-
 button {
   font-family: 'Arvo';
   font-size: 1em;
 }
-
 /* Controls */
 .controls {
   margin-top: 20px;
 }
-
 /* Custom checkbox
 /* Customize the label (the container) */
 .item {
@@ -161,7 +174,6 @@ button {
   -ms-user-select: none;
   user-select: none;
 }
-
 /* Hide the browser's default checkbox */
 .item input {
   position: absolute;
@@ -170,7 +182,6 @@ button {
   height: 0;
   width: 0;
 }
-
 /* Create a custom checkbox */
 .checkmark {
   position: absolute;
@@ -180,29 +191,24 @@ button {
   width: 25px;
   background-color: #eee;
 }
-
 /* On mouse-over, add a grey background color */
 .item:hover input~.checkmark {
   background-color: #ccc;
 }
-
 /* When the checkbox is checked, add a blue background */
 .item input:checked~.checkmark {
   background-color: #2196F3;
 }
-
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-
 /* Show the checkmark when checked */
 .item input:checked~.checkmark:after {
   display: block;
 }
-
 /* Style the checkmark/indicator */
 .item .checkmark:after {
   left: 9px;
